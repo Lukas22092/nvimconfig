@@ -7,6 +7,7 @@ return {
 				border = "rounded",
 			},
 		},
+		picker = { enabled = false },
 	},
 	keys = {
 		{
