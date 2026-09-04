@@ -29,6 +29,24 @@ return {
 			group = vim.api.nvim_create_augroup("SalarLualineThemeSync", { clear = true }),
 			callback = function()
 				lualine.refresh()
+				local groups = {
+					"LualineNormal",
+					"LualineNormalMode",
+					"LualineInsert",
+					"LualineInsertMode",
+					"LualineVisual",
+					"LualineVisualMode",
+					"LualineCommand",
+					"LualineCommandMode",
+					"LualineReplace",
+					"LualineReplaceMode",
+					"LualineInactive",
+					"LualineInactiveMode",
+				}
+				for _, group in ipairs(groups) do
+					local hl = vim.api.nvim_get_hl(0, { name = group })
+					vim.api.nvim_set_hl(0, group, vim.tbl_extend("force", hl, { bg = "none" }))
+				end
 			end,
 		})
 	end,

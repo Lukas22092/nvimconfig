@@ -1,3 +1,5 @@
+local log = require("salar.core.log")
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
 	vim.fn.system({
@@ -18,6 +20,17 @@ require("lazy").setup({
 	change_detection = {
 		notify = false,
 	},
+	checker = {
+		enabled = true,
+		notify = false,
+	},
 })
 
-require("salar.core.theme").setup()
+local ok_theme, err_theme = pcall(function()
+	require("salar.core.theme").setup()
+end)
+if ok_theme then
+	log.info("theme setup complete")
+else
+	log.error("theme setup failed: " .. tostring(err_theme))
+end

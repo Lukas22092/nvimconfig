@@ -8,11 +8,22 @@ return {
 		"nvim-telescope/telescope-live-grep-args.nvim",
 	},
 	config = function()
+		local log = require("salar.core.log")
 		local telescope = require("telescope")
 		local actions = require("telescope.actions")
 
+		log.info("telescope config starting")
+
+		-- nvim-treesitter (main) removed legacy previewer helpers; swap in
+		-- a core-API highlighter so the preview pane doesn't crash.
+		local ok_tsc, err_tsc = pcall(function()
+			require("salar.core.treesitter_compat").setup()
+		end)
+		if not ok_tsc then log.error("treesitter compat failed: " .. tostring(err_tsc)) end
+
 		local function try_require(mod)
 			local ok, m = pcall(require, mod)
+			if not ok then log.warn("require failed: " .. mod .. ": " .. tostring(m)) end
 			return ok and m or nil
 		end
 
@@ -58,6 +69,17 @@ return {
 					},
 				},
 			},
+			extensions = {
+				live_grep_args = {
+					auto_quoting = false,
+					mappings = {
+						i = {
+							["<C-f>"] = lga_actions.quote_prompt(),
+							["<C-a>"] = lga_actions.quote_prompt({ postfix = " --hidden " }),
+						},
+					},
+				},
+			},
 		})
 
 		if trouble_key then
@@ -73,13 +95,21 @@ return {
 
 		local ok_fzf, _ = pcall(telescope.load_extension, "fzf")
 		if not ok_fzf then
+			log.warn("fzf extension failed to load")
 			vim.notify("Telescope fzf extension failed to load", vim.log.levels.WARN)
+		else
+			log.info("fzf extension loaded")
 		end
 
 		local ok_lga, _ = pcall(telescope.load_extension, "live_grep_args")
 		if not ok_lga then
+			log.warn("live_grep_args extension failed to load")
 			vim.notify("Telescope live_grep_args extension failed to load", vim.log.levels.WARN)
+		else
+			log.info("live_grep_args extension loaded")
 		end
+
+		log.info("telescope config done")
 
 		local keymap = vim.keymap
 		keymap.set("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Fuzzy find files" })
