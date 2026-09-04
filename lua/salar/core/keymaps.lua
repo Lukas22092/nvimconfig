@@ -2,8 +2,23 @@ vim.g.mapleader = " "
 
 local keymap = vim.keymap
 
-keymap.set("n", "<C-u>", "<C-u>zz")
-keymap.set("n", "<C-d>", "<C-d>zz")
+local function scroll_keep_cursor(delta)
+	local prev = vim.fn.winsaveview()
+	local top = vim.fn.line("w0")
+	local bot = vim.fn.line("w$")
+	local mid = math.floor((top + bot) / 2)
+	local target = mid + delta
+
+	if target < 1 then target = 1 end
+	if target > vim.fn.line("$") then target = vim.fn.line("$") end
+
+	vim.cmd(target)
+	vim.cmd("normal! zz")
+	vim.fn.winrestview(prev)
+end
+
+keymap.set("n", "<C-u>", function() scroll_keep_cursor(-math.floor(vim.o.lines / 2)) end, { desc = "Scroll half page up (cursor stays)" })
+keymap.set("n", "<C-d>", function() scroll_keep_cursor(math.floor(vim.o.lines / 2)) end, { desc = "Scroll half page down (cursor stays)" })
 
 -- window management
 keymap.set("n", "<leader>sv", "<C-w>v", { desc = "Split window vertically" })
