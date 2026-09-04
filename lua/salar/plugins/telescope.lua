@@ -12,6 +12,15 @@ return {
 
 		telescope.setup({
 			defaults = {
+				vimgrep_arguments = {
+					"rg",
+					"--color=never",
+					"--no-heading",
+					"--with-filename",
+					"--line-number",
+					"--column",
+					"--smart-case",
+				},
 				file_ignore_patterns = {
 					"node_modules",
 					"vendor",
@@ -26,32 +35,6 @@ return {
 						["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
 						["<C-e>"] = actions.to_fuzzy_refine,
 					},
-				},
-			},
-			pickers = {
-				live_grep = {
-					additional_args = function()
-						return {
-							"--color=never",
-							"--no-heading",
-							"--with-filename",
-							"--line-number",
-							"--column",
-							"--smart-case",
-						}
-					end,
-				},
-				grep_string = {
-					additional_args = function()
-						return {
-							"--color=never",
-							"--no-heading",
-							"--with-filename",
-							"--line-number",
-							"--column",
-							"--smart-case",
-						}
-					end,
 				},
 			},
 		})

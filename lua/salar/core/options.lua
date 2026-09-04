@@ -36,6 +36,24 @@ opt.splitbelow = true
 opt.foldmethod = "marker"
 opt.foldmarker = "#pragma region,#pragma endregion"
 
+vim.api.nvim_create_autocmd("ColorScheme", {
+	group = vim.api.nvim_create_augroup("SalarTransparentBg", { clear = true }),
+	callback = function()
+		local groups = {
+			"Normal",
+			"NormalNC",
+			"NormalFloat",
+			"SignColumn",
+			"EndOfBuffer",
+			"NeoTreeNormal",
+			"NeoTreeNormalNC",
+		}
+		for _, group in ipairs(groups) do
+			vim.api.nvim_set_hl(0, group, { bg = "none" })
+		end
+	end,
+})
+
 vim.api.nvim_create_autocmd("TextYankPost", {
 	group = vim.api.nvim_create_augroup("SalarYankHighlight", { clear = true }),
 	callback = function()
