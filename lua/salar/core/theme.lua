@@ -4,7 +4,7 @@ local koda = require("salar.core.koda")
 
 local config = {
 	themes = colorschemes.names(),
-	default = "koda",
+	default = "kanagawa",
 	state_file = vim.fn.stdpath("state") .. "/theme.txt",
 }
 

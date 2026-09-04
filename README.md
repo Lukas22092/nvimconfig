@@ -23,25 +23,104 @@ A focused Neovim setup for day-to-day coding, with fast navigation, LSP-backed e
 - A custom theme picker with persisted selection and quick next/previous theme commands.
 - Practical UI touches: file tree, bufferline, lualine, diagnostics, folds, markdown rendering, and quality-of-life editing plugins.
 
+## Prerequisites
+
+Before installing, make sure you have the following:
+
+- **Neovim** >= 0.10
+- **Git**
+- **A C compiler** (`gcc` or `clang`) and `make` (needed for native plugin builds)
+- **A Nerd Font** (for icons to render correctly)
+- **[Material Icon Theme](https://github.com/odeking/material-icon-theme)** or any other icon theme for your desktop environment (for nvim-web-devicons to look correct in file pickers and nvim-tree)
+
+### Ghostty Terminal (Recommended)
+
+This config is designed to pair with the [Ghostty](https://ghostty.org/) terminal. To get the full experience with the background image, install Ghostty and copy the config:
+
+```sh
+# Install Ghostty (see https://ghostty.org/docs/install)
+# On Arch:
+paru -S ghostty-bin
+
+# On Fedora:
+# Follow https://ghostty.org/docs/install
+
+# On Ubuntu/Debian (flatpak or build from source):
+# See https://ghostty.org/docs/install
+
+# Once Ghostty is installed, copy the config:
+mkdir -p ~/.config/ghostty
+cat > ~/.config/ghostty/config << 'EOF'
+background-image = ~/.config/nvim/background/01-nvim_background.png
+background-opacity = 1.0
+window-decoration = none
+EOF
+
+# The background image is included in this repo under background/.
+# The background path is already in .gitignore, so you need to copy it manually:
+# Copy the background image from the cloned repo into the expected location
+```
+
+**Important:** The `background-image` path in the Ghostty config points to `~/.config/nvim/background/01-nvim_background.png`. The background image directory is excluded from git (see `.gitignore`), so you must supply your own background image at that path. Place any `.png` background image there after cloning.
+
 ## Install
 
 Back up your existing config first, then clone this repo into Neovim's config directory:
 
 ```sh
-git clone <repo-url> ~/.config/nvim
+# Back up existing config
+mv ~/.config/nvim ~/.config/nvim.bak
+
+# Clone
+git clone https://github.com/SalarAlo/neovim_configuration ~/.config/nvim
+```
+
+Then launch Neovim:
+
+```sh
 nvim
 ```
 
-On first launch, `lazy.nvim` installs itself and then installs the configured plugins.
+On first launch, `lazy.nvim` bootstraps itself and installs all configured plugins. This may take a minute.
 
-### External tools
+### Language Servers
 
-Some features work best when these tools are available on your `PATH`:
+Mason will automatically install most language servers, but for the best experience install these system-wide:
 
-- `git`, `make`, and a C compiler for native plugin builds.
-- Language servers such as `clangd`, `rust-analyzer`, `lua-language-server`, `tinymist`, and `haskell-language-server-wrapper`.
-- `lldb-dap` or `codelldb` for debugging C, C++, and Rust.
-- `gdshader-lsp` for Godot shader support.
+```sh
+# Arch Linux
+sudo pacman -S nodejs npm lua-language-server rust-analyzer clang
+
+# Fedora
+sudo dnf install nodejs npm lua-language-server rust-analyzer clang
+
+# Ubuntu/Debian
+sudo apt install nodejs npm
+# Then install language servers via Mason in Neovim (:Mason)
+```
+
+### Debugging (C/C++/Rust)
+
+Install one of these DAP adapters:
+
+```sh
+# lldb-dap (preferred)
+# Arch: sudo pacman -S lldb
+# Fedora: sudo dnf install lldb
+# Ubuntu: sudo apt install lldb
+
+# Or codelldb via Mason
+```
+
+### Optional Tools
+
+These improve the experience but are not required:
+
+- **[lazygit](https://github.com/jesseduffield/lazygit)** - for `<leader>gg` git UI
+- **[typst](https://typst.app/)** - for Typst document compilation
+- **[zathura](https://github.com/pwmt/zathura)** - for Typst PDF preview
+- **[gdshader-lsp](https://github.com/GodotShaderTools/gdshader-lsp)** - for Godot shader support
+- **[gdscript-formatter](https://github.com/SalarAlo/gdscript-formatter)** - for GDScript formatting
 
 ## Keybindings
 
@@ -66,6 +145,9 @@ Leader is `<Space>`.
 | `<leader>dc` | Continue debugger |
 | `<leader>db` | Toggle breakpoint |
 | `<leader>ds`, `<leader>di`, `<leader>do` | Step over / into / out |
+| `<leader>tf` | Floating terminal |
+| `<leader>gg` | LazyGit |
+| `<leader>bg` | Vim be good (motions trainer) |
 
 ## Structure
 
@@ -74,6 +156,7 @@ init.lua                 Entry point
 lua/salar/core/          Options, keymaps, theme state, filetype setup
 lua/salar/plugins/       Plugin specs
 lua/salar/plugins/lsp/   LSP and Mason setup
-lua/salar/tools/         Small local helper tools
+lua/salar/tools/         Small local helper tools (C++ utilities, Typst, skeleton)
+background/              Background image for Ghostty terminal
 showcase/                README screenshots
 ```

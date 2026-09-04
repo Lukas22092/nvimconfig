@@ -38,3 +38,11 @@ keymap.set("n", "<leader>tp", "<cmd>ThemePrev<CR>", { desc = "Previous theme" })
 
 -- terminal related
 keymap.set("t", "<Esc>", [[<C-\><C-n>]])
+keymap.set("n", "<leader>th", function()
+	vim.cmd("split | terminal")
+	vim.cmd("startinsert")
+end, { desc = "Open horizontal terminal" })
+keymap.set("n", "<leader>tv", function()
+	vim.cmd("vsplit | terminal")
+	vim.cmd("startinsert")
+end, { desc = "Open vertical terminal" })

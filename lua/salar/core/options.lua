@@ -6,9 +6,9 @@ opt.relativenumber = true
 opt.number = true
 
 -- tabs / indentation
-opt.tabstop = 8
-opt.shiftwidth = 8
-opt.expandtab = false
+opt.tabstop = 4
+opt.shiftwidth = 4
+opt.expandtab = true
 opt.autoindent = true
 opt.smartindent = true
 opt.copyindent = true
@@ -34,6 +34,13 @@ opt.splitbelow = true
 
 opt.foldmethod = "marker"
 opt.foldmarker = "#pragma region,#pragma endregion"
+
+vim.api.nvim_create_autocmd("TextYankPost", {
+	group = vim.api.nvim_create_augroup("SalarYankHighlight", { clear = true }),
+	callback = function()
+		vim.highlight.on_yank({ timeout = 300 })
+	end,
+})
 
 vim.api.nvim_create_autocmd("FileType", {
 	callback = function(args)
