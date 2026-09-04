@@ -11,8 +11,21 @@ return {
 		local actions = require("telescope.actions")
 		local rndr = require("rndr")
 
+		local rg_args = {
+			"rg",
+			"--color=never",
+			"--no-heading",
+			"--with-filename",
+			"--line-number",
+			"--column",
+			"--smart-case",
+			"!",
+			".git",
+		}
+
 		telescope.setup({
 			defaults = {
+				vimgrep_arguments = rg_args,
 				buffer_previewer_maker = rndr.telescope_buffer_previewer_maker,
 				file_ignore_patterns = {
 					"node_modules",
@@ -27,7 +40,20 @@ return {
 						["<C-j>"] = actions.move_selection_next,
 						["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
 						["<C-t>"] = require("trouble.sources.telescope").open,
+						["<C-e>"] = actions.to_fuzzy_refine,
 					},
+				},
+			},
+			pickers = {
+				live_grep = {
+					additional_args = function()
+						return rg_args
+					end,
+				},
+				grep_string = {
+					additional_args = function()
+						return rg_args
+					end,
 				},
 			},
 		})
@@ -35,7 +61,7 @@ return {
 		telescope.load_extension("fzf")
 
 		local keymap = vim.keymap
-		keymap.set("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Fuzzy find recent files" })
+		keymap.set("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Fuzzy find files" })
 		keymap.set("n", "<leader>fw", "<cmd>Telescope live_grep<cr>", { desc = "Find string in cwd" })
 		keymap.set("n", "<leader>sg", "<cmd>Telescope live_grep<cr>", { desc = "Grep (ripgrep)" })
 		keymap.set("n", "<leader>fs", "<cmd>Telescope lsp_document_symbols<cr>", { desc = "Find document symbols" })

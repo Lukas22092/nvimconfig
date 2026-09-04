@@ -1,4 +1,4 @@
-	return {
+return {
 	"folke/snacks.nvim",
 	opts = {
 		terminal = {
@@ -6,9 +6,6 @@
 				style = "float",
 				border = "rounded",
 			},
-		},
-		which_key = {
-			enabled = true,
 		},
 	},
 	keys = {
@@ -19,13 +16,5 @@
 			end,
 			desc = "Toggle floating terminal",
 		},
-		{
-			"<leader>?",
-			function()
-				Snacks.which_key()
-			end,
-			desc = "Which-key: show keybindings",
-		},
-
 	},
 }
