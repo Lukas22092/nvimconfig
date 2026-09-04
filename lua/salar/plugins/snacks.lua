@@ -1,4 +1,4 @@
-return {
+	return {
 	"folke/snacks.nvim",
 	opts = {
 		terminal = {
@@ -8,11 +8,7 @@ return {
 			},
 		},
 		which_key = {
-			icons = {
-				breadcrumb = " » ",
-				separator = " ➜ ",
-				group = "+",
-			},
+			enabled = true,
 		},
 	},
 	keys = {
@@ -30,5 +26,6 @@ return {
 			end,
 			desc = "Which-key: show keybindings",
 		},
+
 	},
 }
