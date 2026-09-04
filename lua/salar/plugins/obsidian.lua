@@ -42,6 +42,7 @@ return {
 		"hrsh7th/nvim-cmp",
 	},
 	init = function()
+		local log = require("salar.core.log")
 		local group = vim.api.nvim_create_augroup("salar-obsidian-markdown", { clear = true })
 
 		vim.api.nvim_create_autocmd("FileType", {
@@ -55,12 +56,18 @@ return {
 				require("salar.core.obsidian").setup_markdown_buffer(args.buf)
 			end,
 		})
+
+		log.info("obsidian init hook registered")
 	end,
 	opts = function()
-		return require("salar.core.obsidian").opts()
+		local opts = require("salar.core.obsidian").opts()
+		require("salar.core.log").debug("obsidian opts computed; " .. #opts.workspaces .. " workspace(s)")
+		return opts
 	end,
 	config = function(_, opts)
+		local log = require("salar.core.log")
 		require("obsidian").setup(opts)
 		require("salar.core.obsidian").patch_template_substitutions()
+		log.info("obsidian setup complete")
 	end,
 }

@@ -194,8 +194,18 @@ Leader is `<Space>`.
 | `<leader>ts` | Select theme |
 | `<leader>tn` / `<leader>tp` | Next / previous theme |
 | `<leader>tf` | Floating terminal |
+| `<leader>tv` | Vertical terminal |
 | `<leader>gg` | LazyGit |
 | `<leader>bg` | Vim be good (motions trainer) |
+| `<leader>lg` / `<leader>gc` | Open / clear the salar log |
+
+## Logging
+
+Configuration startup and plugin loads are logged to `~/.cache/nvim/salar.log` (or your `stdpath('cache')`).
+
+- `:SalarLog` — open the log; `:SalarLog clear` clears it (also `<leader>lg` / `<leader>gc`)
+- `:SalarLogLevel <trace|debug|info|warn|error>` — set log verbosity at runtime
+- `vim.g.salar_log_level` / `vim.g.salar_log_enabled` — defaults (`info` / `true`)
 
 ## Structure
 

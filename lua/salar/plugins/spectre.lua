@@ -7,6 +7,7 @@ return {
 		{ "<leader>sp", function() require("spectre").open_file_search({ select_word = true }) end, desc = "Spectre: Search in current file" },
 	},
 	config = function()
+		local log = require("salar.core.log")
 		require("spectre").setup({
 			replace_engine = "sed",
 			live_update = true,
@@ -49,5 +50,7 @@ return {
 
 		vim.api.nvim_set_hl(0, "SpectreSearch", { bg = "#3a5a3a", fg = "#a6e3a1" })
 		vim.api.nvim_set_hl(0, "SpectreReplace", { bg = "#5a3a3a", fg = "#f38ba8" })
+
+		log.info("spectre setup complete")
 	end,
 }

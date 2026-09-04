@@ -1,3 +1,5 @@
+local log = require("salar.core.log")
+
 vim.g.mapleader = " "
 
 local keymap = vim.keymap
@@ -61,3 +63,9 @@ keymap.set("n", "<leader>tv", function()
 	vim.cmd("vsplit | terminal")
 	vim.cmd("startinsert")
 end, { desc = "Open vertical terminal" })
+
+-- Logging helpers
+keymap.set("n", "<leader>lg", "<cmd>SalarLog<CR>", { desc = "Open salar log" })
+keymap.set("n", "<leader>gc", "<cmd>SalarLog clear<CR>", { desc = "Clear salar log" })
+
+log.info("core keymaps configured (leader=<Space>)")

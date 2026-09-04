@@ -7,6 +7,7 @@ return {
 		{ "folke/neodev.nvim",                   opts = {} },
 	},
 	config = function()
+		local log = require("salar.core.log")
 		local lspconfig = require("lspconfig")
 		local cmp_nvim_lsp = require("cmp_nvim_lsp")
 		local keymap = vim.keymap
@@ -31,6 +32,9 @@ return {
 		vim.api.nvim_create_autocmd("LspAttach", {
 			group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 			callback = function(ev)
+				local client = vim.lsp.get_client_by_id(ev.data.client_id)
+				local bufname = vim.api.nvim_buf_get_name(ev.buf)
+				log.info(string.format("LspAttach: %s -> %s (buf %d)", client and client.name or "unknown", bufname, ev.buf))
 				local opts = { buffer = ev.buf, silent = true }
 
 				local client = vim.lsp.get_client_by_id(ev.data.client_id)
@@ -97,6 +101,15 @@ return {
 		-- LSP completion capabilities
 		local capabilities = cmp_nvim_lsp.default_capabilities()
 
+		local function lsp_enable(name)
+			local ok, err = pcall(vim.lsp.enable, name)
+			if ok then
+				log.info("lsp server enabled: " .. name)
+			else
+				log.error("lsp server enable failed: " .. name .. " -> " .. tostring(err))
+			end
+		end
+
 		-- diagnostic signs
 		local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
 		for type, icon in pairs(signs) do
@@ -136,7 +149,7 @@ return {
 			},
 		})
 
-		vim.lsp.enable("ts_ls")
+		lsp_enable("ts_ls")
 
 		-- ============================
 		-- Clang
@@ -150,7 +163,7 @@ return {
 				"--query-driver=/usr/bin/c++,/usr/bin/g++",
 			},
 		})
-		vim.lsp.enable("clangd")
+		lsp_enable("clangd")
 
 		-- ============================
 		-- Lua
@@ -175,7 +188,7 @@ return {
 				},
 			},
 		})
-			vim.lsp.enable("lua_ls")
+			lsp_enable("lua_ls")
 
 			-- auto-format on save
 			vim.api.nvim_create_autocmd("BufWritePre", {
@@ -224,7 +237,7 @@ return {
 			},
 		})
 
-		vim.lsp.enable("rust_analyzer")
+		lsp_enable("rust_analyzer")
 
 		-- ============================
 		-- Typst
@@ -236,7 +249,7 @@ return {
 			capabilities = capabilities,
 		})
 
-		vim.lsp.enable("tinymist")
+		lsp_enable("tinymist")
 
 		-- ============================
 		-- Haskell
@@ -249,7 +262,7 @@ return {
 				root_markers = { "hie.yaml", "stack.yaml", "cabal.project", "package.yaml", "*.cabal", ".git" },
 			})
 
-			vim.lsp.enable("hls")
+			lsp_enable("hls")
 		end
 
 		-- ============================
@@ -259,14 +272,14 @@ return {
 			capabilities = capabilities,
 		})
 
-		vim.lsp.enable("gdscript")
+		lsp_enable("gdscript")
 
 		if vim.fn.executable("gdshader-lsp") == 1 then
 			vim.lsp.config("gdshader_lsp", {
 				capabilities = capabilities,
 			})
 
-			vim.lsp.enable("gdshader_lsp")
+			lsp_enable("gdshader_lsp")
 		end
 	end,
 

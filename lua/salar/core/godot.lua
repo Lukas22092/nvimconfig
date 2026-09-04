@@ -1,5 +1,7 @@
 local M = {}
 
+local log = require("salar.core.log")
+
 local function godot_root_for(path)
 	local resolved = vim.fs.normalize(path)
 	local match = vim.fs.find("project.godot", {
@@ -26,7 +28,12 @@ local function ensure_godot_server(path)
 	end
 
 	local address = vim.fs.joinpath(root, "godothost")
-	pcall(vim.fn.serverstart, address)
+	local ok, err = pcall(vim.fn.serverstart, address)
+	if ok then
+		log.info("Godot: started server at " .. address)
+	else
+		log.error("Godot: serverstart failed for " .. address .. ": " .. tostring(err))
+	end
 end
 
 function M.setup()
@@ -35,6 +42,7 @@ function M.setup()
 	vim.api.nvim_create_autocmd("VimEnter", {
 		group = group,
 		callback = function()
+			log.info("Godot: VimEnter, ensuring server for " .. vim.fn.getcwd())
 			ensure_godot_server(vim.fn.getcwd())
 		end,
 	})
@@ -42,6 +50,7 @@ function M.setup()
 	vim.api.nvim_create_autocmd("DirChanged", {
 		group = group,
 		callback = function(event)
+			log.info("Godot: DirChanged, ensuring server for " .. tostring(event.file or vim.fn.getcwd()))
 			ensure_godot_server(event.file or vim.fn.getcwd())
 		end,
 	})
@@ -51,6 +60,7 @@ function M.setup()
 		callback = function(event)
 			local name = vim.api.nvim_buf_get_name(event.buf)
 			if name ~= "" then
+				log.debug("Godot: buffer event, checking " .. name)
 				ensure_godot_server(name)
 			end
 		end,

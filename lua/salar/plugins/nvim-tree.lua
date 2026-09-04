@@ -2,6 +2,7 @@ return {
 	"nvim-tree/nvim-tree.lua",
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	config = function()
+		local log = require("salar.core.log")
 		local nvimtree = require("nvim-tree")
 
 		nvimtree.setup({
@@ -42,5 +43,7 @@ return {
 		local keymap = vim.keymap
 		keymap.set("n", "<C-n>", "<cmd>NvimTreeToggle<CR>", { desc = "Toggle file explorer" })
 		keymap.set("n", "<leader>e", "<cmd>NvimTreeFocus<CR>", { desc = "Focus file explorer" })
+
+		log.info("nvim-tree setup complete")
 	end,
 }

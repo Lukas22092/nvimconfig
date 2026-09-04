@@ -1,6 +1,7 @@
 local M = {}
 local colorschemes = require("salar.core.colorschemes")
 local koda = require("salar.core.koda")
+local log = require("salar.core.log")
 
 local config = {
 	themes = colorschemes.names(),
@@ -22,6 +23,7 @@ local function persist(name)
 	local dir = vim.fn.fnamemodify(config.state_file, ":h")
 	vim.fn.mkdir(dir, "p")
 	vim.fn.writefile({ name }, config.state_file)
+	log.debug("persisted theme: " .. name .. " -> " .. config.state_file)
 end
 
 local function read_persisted()
@@ -30,6 +32,7 @@ local function read_persisted()
 	end
 
 	local lines = vim.fn.readfile(config.state_file)
+	log.debug("read persisted theme: " .. (lines[1] or "nil"))
 	return lines[1]
 end
 
@@ -37,6 +40,7 @@ local function apply(name, opts)
 	opts = opts or {}
 
 	if not index_of(name) then
+		log.warn("apply theme failed (unknown theme): " .. name)
 		vim.notify(("Unknown theme: %s"):format(name), vim.log.levels.ERROR)
 		return false
 	end
@@ -45,9 +49,12 @@ local function apply(name, opts)
 
 	local ok, err = pcall(vim.cmd.colorscheme, name)
 	if not ok then
+		log.error("failed to load theme " .. name .. ": " .. tostring(err))
 		vim.notify(("Failed to load theme %s: %s"):format(name, err), vim.log.levels.ERROR)
 		return false
 	end
+
+	log.debug("applied theme: " .. name)
 
 	if opts.persist ~= false then
 		persist(name)

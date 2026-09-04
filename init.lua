@@ -10,5 +10,21 @@ if stat and stat.size > max_lsp_log_size then
 end
 
 vim.lsp.log.set_level(vim.log.levels.ERROR)
+
+local start_time = vim.uv.hrtime()
+
 require("salar.core")
+
+local core_time_ms = (vim.uv.hrtime() - start_time) / 1e6
+local log = require("salar.core.log")
+log.info(string.format("init: salar.core loaded in %.1fms", core_time_ms))
+
 require("salar.lazy")
+
+vim.api.nvim_create_autocmd("VimEnter", {
+	once = true,
+	callback = function()
+		local total_ms = (vim.uv.hrtime() - start_time) / 1e6
+		log.info(string.format("init: startup complete in %.1fms", total_ms))
+	end,
+})

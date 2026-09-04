@@ -4,6 +4,7 @@ return {
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 
 	config = function()
+		local log = require("salar.core.log")
 		local bufferline = require("bufferline")
 
 		local function hl(name)
@@ -95,5 +96,7 @@ return {
 
 		vim.keymap.set("n", "<leader>h", ":BufferLineMovePrev<CR>", { silent = true, desc = "Move buffer left" })
 		vim.keymap.set("n", "<leader>l", ":BufferLineMoveNext<CR>", { silent = true, desc = "Move buffer right" })
+
+		log.info("bufferline setup complete")
 	end,
 }
