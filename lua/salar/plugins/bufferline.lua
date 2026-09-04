@@ -10,35 +10,37 @@ return {
 			return vim.api.nvim_get_hl(0, { name = name, link = false })
 		end
 
-		local function fg_or_nil(group)
+		local function fg_or(group, fallback)
 			local value = hl(group)
-			return value and value.fg or nil
+			return (value and value.fg) or fallback
+		end
+
+		local function bg_or(group, fallback)
+			local value = hl(group)
+			return (value and value.bg) or fallback
 		end
 
 		local function sync_fill_highlight()
+			local normal = hl("Normal")
 			local tabline_fill = hl("TabLineFill")
 			local tabline = hl("TabLine")
-			local normal = hl("Normal")
-			local fill_bg = (tabline_fill and tabline_fill.bg) or (tabline and tabline.bg) or (normal and normal.bg)
+			local fill_bg = bg_or("TabLineFill", bg_or("TabLine", bg_or("Normal", "#1e1e2e")))
 
-			if fill_bg then
-				vim.api.nvim_set_hl(0, "BufferLineFill", { bg = fill_bg })
-			end
+			vim.api.nvim_set_hl(0, "BufferLineFill", { bg = fill_bg })
 		end
 
 		local function sync_tab_highlights()
 			local normal = hl("Normal")
-			local tabline = hl("TabLine")
-			local tabline_sel = hl("TabLineSel")
-
 			if not normal then
 				return
 			end
 
-			local base_bg = (tabline and tabline.bg) or normal.bg
-			local base_fg = (tabline and tabline.fg) or normal.fg
-			local selected_bg = (tabline_sel and tabline_sel.bg) or normal.bg or base_bg
-			local selected_fg = (tabline_sel and tabline_sel.fg) or normal.fg
+			local base_bg = bg_or("TabLine", normal.bg)
+			local base_fg = fg_or("TabLine", normal.fg)
+			local selected_bg = bg_or("TabLineSel", normal.bg)
+			local selected_fg = fg_or("TabLineSel", normal.fg)
+			local warn_fg = fg_or("DiagnosticWarn", base_fg)
+			local special_fg = fg_or("Special", selected_fg)
 
 			vim.api.nvim_set_hl(0, "BufferLineBackground", { bg = base_bg, fg = base_fg })
 			vim.api.nvim_set_hl(0, "BufferLineBufferVisible", { bg = base_bg, fg = base_fg })
@@ -46,13 +48,13 @@ return {
 			vim.api.nvim_set_hl(0, "BufferLineDuplicate", { bg = base_bg, fg = base_fg })
 			vim.api.nvim_set_hl(0, "BufferLineDuplicateVisible", { bg = base_bg, fg = base_fg })
 			vim.api.nvim_set_hl(0, "BufferLineDuplicateSelected", { bg = selected_bg, fg = selected_fg, bold = true })
-			vim.api.nvim_set_hl(0, "BufferLineModified", { bg = base_bg, fg = fg_or_nil("DiagnosticWarn") or base_fg })
-			vim.api.nvim_set_hl(0, "BufferLineModifiedVisible", { bg = base_bg, fg = fg_or_nil("DiagnosticWarn") or base_fg })
-			vim.api.nvim_set_hl(0, "BufferLineModifiedSelected", { bg = selected_bg, fg = fg_or_nil("DiagnosticWarn") or selected_fg })
+			vim.api.nvim_set_hl(0, "BufferLineModified", { bg = base_bg, fg = warn_fg })
+			vim.api.nvim_set_hl(0, "BufferLineModifiedVisible", { bg = base_bg, fg = warn_fg })
+			vim.api.nvim_set_hl(0, "BufferLineModifiedSelected", { bg = selected_bg, fg = warn_fg })
 			vim.api.nvim_set_hl(0, "BufferLineSeparator", { bg = base_bg, fg = base_bg })
 			vim.api.nvim_set_hl(0, "BufferLineSeparatorVisible", { bg = base_bg, fg = base_bg })
 			vim.api.nvim_set_hl(0, "BufferLineSeparatorSelected", { bg = selected_bg, fg = selected_bg })
-			vim.api.nvim_set_hl(0, "BufferLineIndicatorSelected", { bg = selected_bg, fg = fg_or_nil("Special") or selected_fg })
+			vim.api.nvim_set_hl(0, "BufferLineIndicatorSelected", { bg = selected_bg, fg = special_fg })
 		end
 
 		local options = {
@@ -61,8 +63,18 @@ return {
 				separator_style = "thin",
 				always_show_bufferline = true,
 				sort_by = "insert_after_current",
-				diagnostics = false,
-				modified_icon = "",
+				diagnostics = "nvim_lsp",
+				diagnostics_indicator = function(_, _, diag)
+					local icons = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+					local parts = {}
+					for severity, count in pairs(diag) do
+						if icons[severity] then
+							table.insert(parts, icons[severity] .. count)
+						end
+					end
+					return table.concat(parts, " ")
+				end,
+				modified_icon = "●",
 				show_buffer_close_icons = false,
 				show_close_icon = false,
 			},
@@ -81,7 +93,6 @@ return {
 			end,
 		})
 
-		-- Keymaps
 		vim.keymap.set("n", "<leader>h", ":BufferLineMovePrev<CR>", { silent = true, desc = "Move buffer left" })
 		vim.keymap.set("n", "<leader>l", ":BufferLineMoveNext<CR>", { silent = true, desc = "Move buffer right" })
 	end,

@@ -126,25 +126,73 @@ These improve the experience but are not required:
 
 Leader is `<Space>`.
 
+### Search & Navigation
 | Key | Action |
 | --- | --- |
 | `<leader>ff` | Find files |
-| `<leader>fw` | Live grep |
+| `<leader>fw` | Live grep (basic) |
+| `<leader>sg` | **Live grep with args** (ripgrep flags: `-g *.py`, `-t cpp`, pipes, etc.) |
 | `<leader>fs` | Document symbols |
 | `<leader>fc` | Search word under cursor |
+| `<leader>fk` | Find keymaps |
+| `<leader>sq` | Quickfix list |
+| `<leader>sl` | Location list |
+| `<leader>sr` | Registers |
+| `<leader>sh` | Help tags |
+
+### Telescope (inside picker)
+| Key | Action |
+| --- | --- |
+| `<C-f>` | Quote prompt (for literal strings with spaces) |
+| `<C-a>` | Quote prompt + `--hidden` flag |
+| `<C-q>` | Send selection to quickfix |
+| `<C-s>` | Send all results to quickfix |
+| `<C-t>` | Open in Trouble |
+| `<C-e>` | Fuzzy refine (filter results) |
+
+### File Explorer
+| Key | Action |
+| --- | --- |
 | `<C-n>` | Toggle file tree |
 | `<leader>e` | Focus file tree |
+
+### Buffer & Window Management
+| Key | Action |
+| --- | --- |
 | `<Tab>` / `<S-Tab>` | Next / previous buffer |
 | `<leader>x` | Close current buffer |
-| `<leader>ts` | Select theme |
-| `<leader>tn` / `<leader>tp` | Next / previous theme |
-| `gd`, `gD`, `gi`, `gt` | LSP navigation |
+| `<leader>h` / `<leader>l` | Move buffer left / right |
+| `<leader>sv` / `<leader>sh` | Split vertical / horizontal |
+| `<leader>se` / `<leader>sx` | Equalize splits / Close split |
+
+### LSP & Diagnostics
+| Key | Action |
+| --- | --- |
+| `gd`, `gD`, `gi`, `gt` | LSP navigation (def, decl, impl, type) |
 | `<leader>ca` | Code action |
 | `<leader>rn` | Rename symbol |
 | `<leader>d` / `<leader>D` | Line / buffer diagnostics |
-| `<leader>dc` | Continue debugger |
+
+### Debugger
+| Key | Action |
+| --- | --- |
+| `<leader>dc` | Continue |
 | `<leader>db` | Toggle breakpoint |
 | `<leader>ds`, `<leader>di`, `<leader>do` | Step over / into / out |
+
+### Inline Search & Replace (Spectre)
+| Key | Action |
+| --- | --- |
+| `<leader>sr` | Toggle Spectre (search/replace UI) |
+| `<leader>sw` | Spectre: Search word under cursor |
+| `<leader>sp` | Spectre: Search in current file |
+| `<leader>sS` | Send quickfix results to Spectre |
+
+### Themes & Misc
+| Key | Action |
+| --- | --- |
+| `<leader>ts` | Select theme |
+| `<leader>tn` / `<leader>tp` | Next / previous theme |
 | `<leader>tf` | Floating terminal |
 | `<leader>gg` | LazyGit |
 | `<leader>bg` | Vim be good (motions trainer) |
